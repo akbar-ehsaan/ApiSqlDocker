@@ -7,30 +7,16 @@
 </head>
 
 <body>
-  <button onclick="connectToDevice()">Connect to USB Device</button>
-
+  <button onclick="requestUSBDevice()">Request USB Device</button>
+  
   <script>
-    let device;
-
-    async function connectToDevice() {
+    async function requestUSBDevice() {
       try {
-        device = await navigator.usb.requestDevice({ filters: [{}] });
-
-        await device.open();
-        await device.selectConfiguration(1);
-        await device.claimInterface(2);
-        
-        await device.controlTransferOut({
-          requestType: 'class',
-          recipient: 'interface',
-          request: 0x22,
-          value: 0x01,
-          index: 0x02
-        });
-
-        const result = await device.transferIn(5, 64);
-        const decoder = new TextDecoder();
-        console.log('Received: ' + decoder.decode(result.data));
+        const device = await navigator.usb.requestDevice({ filters: [{ }] });
+        console.log(device.productName);      // "Arduino Micro"
+        console.log(device.manufacturerName); // "Arduino LLC"
+    
+        // Do more with the connected device here
       } catch (error) {
         console.error(error);
       }
